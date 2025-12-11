@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suggestions & Reviews</title>
+    <link rel="stylesheet" href="sstyle.css">
+    <script src="sscript.js" defer></script>
+    <link rel="icon" href="images/LOGO-removebg-preview.png" type="image/png">
+    <link rel="shortcut icon" href="images/LOGO-removebg-preview.png" type="image/png">
+</head>
+<body>
+    <header>
+        <img id="logo" src="images/LOGO.jpg" alt="BRIDGING THE GAPS logo">
+        <h1>BRIDGING THE GAPS</h1>
+        <nav>
+            <ul>
+                <li><a href="INDEX.html#about">About Us</a></li>
+                <li><a href="INDEX.html#awareness">Awareness</a></li>
+                <li><a href="collaborators.html">Collaborators</a></li>
+                <li><a href="projects.html">Our Projects</a></li>
+                <li><a href="suggestions.html">Suggestions</a></li>
+                <li><a href="INDEX.html#donations">Donations</a></li>
+
+            </ul>
+        </nav>
+         <!-- Authentication area: login/register or user avatar -->
+        <div class="auth-area" style="margin-left:18px; display:flex; align-items:center; gap:10px;">
+            <div id="authArea" class="auth-actions">
+                <a href="login.html" class="auth-btn">Login</a>
+                <a href="signup.html" class="auth-btn">Register</a>
+            </div>
+            <img id="userAvatar" src="" alt="User avatar" style="display:none; width:44px; height:44px; border-radius:50%; object-fit:cover; cursor:pointer; border:2px solid rgba(255,255,255,0.12);" title="Click to logout">
+        </div>
+    </header>
+
+    <section id="intro" class="page-intro">
+        <h2>Your Voice Matters</h2>
+        <p>We believe in building a better tomorrow — together. Share your thoughts, ideas, and experiences to help us improve our community projects and outreach programs.</p>
+    </section>
+
+    <section id="reviews" class="reviews">
+        <h2>Community Reviews</h2>
+        <p>Read what others say about our work, or leave your own review below.</p>
+
+        <div class="review-form">
+            <h3>Leave a Review</h3>
+            <form id="reviewForm">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="rating">Rating (1–5)</label>
+                <select id="rating" name="rating" required>
+                    <option value="">Select</option>
+                    <option value="5">⭐⭐⭐⭐⭐</option>
+                    <option value="4">⭐⭐⭐⭐</option>
+                    <option value="3">⭐⭐⭐</option>
+                    <option value="2">⭐⭐</option>
+                    <option value="1">⭐</option>
+                </select>
+
+                <label for="message">Your Feedback</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+
+                <button type="submit">Submit Review</button>
+            </form>
+        </div>
+
+        <div class="review-list">
+            <h3>Recent Reviews</h3>
+            <ul id="reviewsContainer"></ul>
+        </div>
+    </section>
+
+    <section id="suggestions-form" class="google-form">
+        <h2>Formal Suggestions & Complaints</h2>
+        <p>If you have a detailed suggestion or complaint, please use the official form below:</p>
+        <a href="https://forms.gle/dY5xSfeyhT1PD4tg9" target="_blank" rel="noopener noreferrer">
+            <button>Open Google Form</button>
+        </a>
+    </section>
+
+    <footer>
+        <div class="social-media container">
+            <a href="https://www.instagram.com/bridging.the.gaps/?hl=en" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <img src="images/Insta_logo-removebg-preview.png" alt="Instagram">
+            </a>
+
+            <a href="mailto:unsdg10@gmail.com" class="email-link" aria-label="Email unsdg10">
+                Contact: <span>unsdg10@gmail.com</span>
+            </a>
+
+            <div class="site-credit">
+                <p>Website designed by <strong>MA Services</strong>.</p>
+                <a href="https://www.instagram.com/ma_services_2025/" target="_blank" rel="noopener noreferrer" aria-label="MA Services Instagram">
+                    <img src="images/MA SERVICES LOGO.jpg" alt="MA Services Logo" style="margin-top:6px;" />
+                </a>
+                <p> &copy; 2025 BRIDGING THE GAPS. All rights reserved</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

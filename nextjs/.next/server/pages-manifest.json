@@ -1,0 +1,20 @@
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/api/admin": "pages/api/admin.js",
+  "/api/auth/login": "pages/api/auth/login.js",
+  "/api/auth/logout": "pages/api/auth/logout.js",
+  "/api/auth/me": "pages/api/auth/me.js",
+  "/api/auth/signup": "pages/api/auth/signup.js",
+  "/api/uploads/presign": "pages/api/uploads/presign.js",
+  "/collaborators": "pages/collaborators.js",
+  "/": "pages/index.js",
+  "/login": "pages/login.js",
+  "/signup": "pages/signup.js",
+  "/suggestions": "pages/suggestions.js",
+  "/_document": "pages/_document.js",
+  "/admin": "pages/admin.js",
+  "/projects": "pages/projects.js",
+  "/sitemap.xml": "pages/sitemap.xml.js",
+  "/api/uploads": "pages/api/uploads.js"
+}

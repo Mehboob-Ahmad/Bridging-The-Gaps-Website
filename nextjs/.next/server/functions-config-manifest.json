@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "functions": {
+    "/api/uploads": {},
+    "/admin": {},
+    "/projects": {},
+    "/sitemap.xml": {}
+  }
+}

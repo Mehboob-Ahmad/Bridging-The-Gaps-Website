@@ -1,0 +1,143 @@
+
+/* cstyle.css — styles for collaborators.html, matching SITE header/footer bar colors from STYLE.css */
+:root{
+	--bg-1: #0f1724;
+	--bg-2: #0b1220;
+	--bar-bg: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+	--card: #f7fafc;
+	--accent: #0ea5a4;
+	--muted: #6b7280;
+	--max-width: 1100px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+	font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+	background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+	color:#111827;
+	padding:28px 14px;
+}
+
+.container{max-width:var(--max-width);margin:0 auto}
+
+header{
+	background:var(--bar-bg);
+	padding:16px 18px;
+	border-radius:10px;
+	display:flex;align-items:center;gap:12px;justify-content:space-between;margin-bottom:20px;
+	border:2px solid #ffffff;
+}
+header #logo{
+	height:56px;
+	width:56px;
+	border-radius:50%;
+	object-fit:cover;
+}
+header h1{color:#fff;font-size:1.25rem;margin-left:8px}
+
+nav ul{display:flex;gap:10px;list-style:none;margin-left:auto}
+nav a{color:rgba(255,255,255,0.9);text-decoration:none;padding:6px 8px;border-radius:6px;font-weight:600}
+nav a:hover{background:rgba(255,255,255,0.05);color:var(--accent)}
+
+section{background:var(--card);border-radius:10px;padding:18px;margin:12px auto 24px auto;box-shadow:0 8px 24px rgba(2,6,23,0.28);max-width:var(--max-width)}
+section h2{color:#0f1724;margin-bottom:10px}
+section p, section a{color:#1f2937}
+
+section img{
+	max-width:150px;
+	width:150px;
+	height:150px;
+	object-fit:cover;
+	border-radius:50%;
+	margin:12px auto;
+	display:block;
+}
+
+section button{
+	background:var(--accent);
+	color:#fff;
+	border:none;
+	padding:12px 24px;
+	border-radius:8px;
+	cursor:pointer;
+	font-size:1rem;
+	font-weight:600;
+	margin-top:16px;
+	transition:background 0.2s ease;
+}
+section button:hover{background:#089b98}
+section button:focus{outline:3px solid rgba(14,165,164,0.3);outline-offset:2px}
+
+.social-media{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.social-media img{height:34px;width:auto;border-radius:4px}
+.email-link{font-weight:600;color:inherit;text-decoration:none}
+
+footer{
+	margin-top:48px; /* larger gap from last section */
+	text-align:center;
+	color:rgba(255,255,255,0.95);
+	font-size:0.95rem;
+	padding:18px 0; /* vertical padding for the bar */
+	background: var(--bar-bg);
+	border-radius:6px;
+	width:100%;
+	border:2px solid #ffffff;
+}
+
+/* center the content inside the full-width footer */
+footer > .container{
+	max-width:var(--max-width);
+	margin:0 auto;
+	padding:0 16px;
+	display:flex;
+	align-items:center;
+	gap:12px;
+	justify-content:space-between;
+}
+footer small{display:block;color:rgba(255,255,255,0.65);font-size:0.85rem}
+
+/* MA Services logo in footer - make circular */
+footer .site-credit img{
+	border-radius:50%;
+	width:36px;
+	height:36px;
+	object-fit:cover;
+}
+
+/* Utilities */
+.muted{color:var(--muted)}
+
+/* Responsive */
+@media (max-width:800px){
+	header{flex-direction:column;align-items:flex-start}
+	nav ul{flex-wrap:wrap}
+	header h1{margin-left:0;margin-top:8px}
+	.pdf-section iframe{height:320px}
+}
+
+@media (max-width:420px){
+	body{padding:18px 12px}
+	header #logo{
+		height:56px;
+		width:56px;
+	}
+}
+
+/* small accessibility focus styles */
+a:focus{outline:3px solid rgba(14,165,164,0.18);outline-offset:2px}
+
+/* Auth button and avatar styles (match STYLE.css) */
+.auth-actions .auth-btn{
+	display:inline-block;
+ 	background:#16a34a; /* green */
+ 	color:#fff;
+ 	padding:8px 12px;
+ 	border-radius:8px;
+ 	text-decoration:none;
+ 	font-weight:700;
+ 	box-shadow:0 6px 14px rgba(22,163,74,0.12);
+}
+.auth-actions .auth-btn:hover{opacity:0.95}
+.auth-actions .auth-btn:focus{outline:3px solid rgba(16,185,129,0.18); outline-offset:2px}
+.user-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.12)}

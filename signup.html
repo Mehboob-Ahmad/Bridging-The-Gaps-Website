@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Sign Up — BRIDGING THE GAPS</title>
+    <link rel="stylesheet" href="signup.css">
+    <script src="signup.js" defer></script>
+    <link rel="icon" href="images/LOGO-removebg-preview.png" type="image/png">
+    <link rel="shortcut icon" href="images/LOGO-removebg-preview.png" type="image/png">
+</head>
+<body>
+    <main class="container" style="max-width:600px;margin:36px auto;">
+        <h1>Create an account</h1>
+        <p>Please provide your name, email and a password. Optionally add a profile picture.</p>
+    <form id="signupForm" action="php/signup.php" method="post" enctype="multipart/form-data">
+            <label for="suName">Full name</label>
+            <input id="suName" name="name" type="text" required>
+
+            <label for="suEmail">Email</label>
+            <input id="suEmail" name="email" type="email" required>
+
+            <label for="suPassword">Password</label>
+            <input id="suPassword" name="password" type="password" required>
+
+            <label for="suPassword2">Confirm password</label>
+            <input id="suPassword2" name="password2" type="password" required>
+
+            <label for="suAvatar">Choose profile picture (optional)</label>
+            <input id="suAvatar" name="avatar" type="file" accept="image/*">
+
+                <div style="margin-top:12px; display:flex; gap:8px;">
+                    <button type="submit" style="background:#16a34a;color:#fff;padding:10px 14px;border-radius:8px;border:none;font-weight:700;">Create account</button>
+                    <a href="login.html" class="auth-btn" style="background:#0ea5a4;">Have an account? Login</a>
+                </div>
+        </form>
+    </main>
+</body>
+</html>

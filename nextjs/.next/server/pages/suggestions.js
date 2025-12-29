@@ -15,7 +15,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.d(__webpack_exports__, {
   config: () => (/* binding */ config),
   "default": () => (/* binding */ next_route_loaderpage_2Fsuggestions_preferredRegion_absolutePagePath_private_next_pages_2Fsuggestions_js_absoluteAppPath_private_next_pages_2F_app_js_absoluteDocumentPath_next_2Fdist_2Fpages_2F_document_middlewareConfigBase64_e30_3D_),
-  getServerSideProps: () => (/* binding */ getServerSideProps),
+  getServerSideProps: () => (/* binding */ next_route_loaderpage_2Fsuggestions_preferredRegion_absolutePagePath_private_next_pages_2Fsuggestions_js_absoluteAppPath_private_next_pages_2F_app_js_absoluteDocumentPath_next_2Fdist_2Fpages_2F_document_middlewareConfigBase64_e30_3D_getServerSideProps),
   getStaticPaths: () => (/* binding */ getStaticPaths),
   getStaticProps: () => (/* binding */ getStaticProps),
   reportWebVitals: () => (/* binding */ reportWebVitals),
@@ -31,7 +31,8 @@ __webpack_require__.d(__webpack_exports__, {
 var suggestions_namespaceObject = {};
 __webpack_require__.r(suggestions_namespaceObject);
 __webpack_require__.d(suggestions_namespaceObject, {
-  "default": () => (Suggestions)
+  "default": () => (Suggestions),
+  getServerSideProps: () => (getServerSideProps)
 });
 
 // EXTERNAL MODULE: ./node_modules/next/dist/server/future/route-modules/pages/module.js
@@ -53,12 +54,18 @@ var head_default = /*#__PURE__*/__webpack_require__.n(head_);
 var external_react_ = __webpack_require__(6689);
 // EXTERNAL MODULE: ./components/Layout.js
 var Layout = __webpack_require__(7345);
+// EXTERNAL MODULE: ./lib/db.js
+var db = __webpack_require__(3125);
+var db_default = /*#__PURE__*/__webpack_require__.n(db);
+// EXTERNAL MODULE: external "next/router"
+var router_ = __webpack_require__(1853);
 ;// CONCATENATED MODULE: ./pages/suggestions.js
 
 
 
 
-const STORAGE_KEY = "bridging-the-gaps-reviews";
+
+
 function formatDate(dateString) {
     const date = new Date(dateString);
     const now = new Date();
@@ -77,34 +84,70 @@ function formatDate(dateString) {
 function stars(rating) {
     return "⭐".repeat(Math.max(1, Math.min(5, rating)));
 }
-function Suggestions() {
-    const [reviews, setReviews] = (0,external_react_.useState)([]);
-    (0,external_react_.useEffect)(()=>{
-        try {
-            const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-            setReviews(stored);
-        } catch  {
-            setReviews([]);
-        }
-    }, []);
-    function handleSubmit(e) {
+function Suggestions({ serverReviews = [] }) {
+    const [reviews, setReviews] = (0,external_react_.useState)(serverReviews || []);
+    const router = (0,router_.useRouter)();
+    async function handleSubmit(e) {
         e.preventDefault();
         const form = e.target;
-        const review = {
-            name: form.name.value.trim(),
-            rating: Number(form.rating.value),
-            message: form.message.value.trim(),
-            date: new Date().toISOString()
-        };
-        if (!review.name || !review.rating || !review.message) return;
-        const next = [
-            review,
-            ...reviews
-        ];
-        setReviews(next);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-        form.reset();
+        const name = form.name.value.trim();
+        const rating = Number(form.rating.value);
+        const message = form.message.value.trim();
+        if (!name || !rating || !message) return;
+        try {
+            const res = await fetch("/api/reviews", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name,
+                    rating,
+                    message
+                })
+            });
+            if (!res.ok) throw new Error("Failed to post");
+            const data = await res.json();
+            // prepend new review
+            setReviews((prev)=>[
+                    data.review,
+                    ...prev
+                ]);
+            form.reset();
+            // update URL (optional) to include a query param to prevent stale cache
+            router.replace(router.pathname, undefined, {
+                shallow: true
+            });
+        } catch (err) {
+            console.error("Submit review failed", err);
+            alert("Failed to submit review");
+        }
     }
+    // Server-side JSON-LD: aggregate rating + up to 10 reviews
+    const SITE_URL = process.env.SITE_URL || "";
+    const base = SITE_URL ? SITE_URL.replace(/\/$/, "") : "";
+    const agg = reviews.length ? reviews.reduce((s, r)=>s + (Number(r.rating) || 0), 0) / reviews.length : 0;
+    const jsonld = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Suggestions & Reviews — BRIDGING THE GAPS",
+        "url": base + "/suggestions",
+        "aggregateRating": reviews.length ? {
+            "@type": "AggregateRating",
+            "ratingValue": Number(agg.toFixed(1)),
+            "ratingCount": reviews.length
+        } : undefined,
+        "review": reviews.slice(0, 10).map((r)=>({
+                "@type": "Review",
+                "author": r.name || "Anonymous",
+                "datePublished": r.created_at || new Date().toISOString(),
+                "reviewBody": r.message || "",
+                "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": Number(r.rating) || 0
+                }
+            }))
+    };
     return /*#__PURE__*/ (0,jsx_runtime.jsxs)(Layout/* default */.Z, {
         children: [
             /*#__PURE__*/ (0,jsx_runtime.jsxs)((head_default()), {
@@ -115,6 +158,12 @@ function Suggestions() {
                     /*#__PURE__*/ jsx_runtime.jsx("meta", {
                         name: "description",
                         content: "Share your reviews, suggestions, and complaints with our team."
+                    }),
+                    /*#__PURE__*/ jsx_runtime.jsx("script", {
+                        type: "application/ld+json",
+                        dangerouslySetInnerHTML: {
+                            __html: JSON.stringify(jsonld)
+                        }
                     })
                 ]
             }),
@@ -222,7 +271,7 @@ function Suggestions() {
                                                 },
                                                 children: "No reviews yet. Be the first to leave a review!"
                                             }),
-                                            reviews.map((review, idx)=>/*#__PURE__*/ (0,jsx_runtime.jsxs)("li", {
+                                            reviews.map((review)=>/*#__PURE__*/ (0,jsx_runtime.jsxs)("li", {
                                                     children: [
                                                         /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
                                                             style: {
@@ -240,7 +289,7 @@ function Suggestions() {
                                                                         color: "var(--muted)",
                                                                         fontSize: "0.9rem"
                                                                     },
-                                                                    children: formatDate(review.date)
+                                                                    children: formatDate(review.created_at)
                                                                 })
                                                             ]
                                                         }),
@@ -259,7 +308,7 @@ function Suggestions() {
                                                             children: review.message
                                                         })
                                                     ]
-                                                }, `${review.date}-${idx}`))
+                                                }, review.id))
                                         ]
                                     })
                                 ]
@@ -292,6 +341,23 @@ function Suggestions() {
         ]
     });
 }
+async function getServerSideProps() {
+    try {
+        const [rows] = await db_default().query("SELECT id,name,rating,message,created_at FROM reviews ORDER BY created_at DESC LIMIT 100");
+        return {
+            props: {
+                serverReviews: rows || []
+            }
+        };
+    } catch (err) {
+        console.error("Error fetching reviews:", err);
+        return {
+            props: {
+                serverReviews: []
+            }
+        };
+    }
+}
 
 ;// CONCATENATED MODULE: ./node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js?page=%2Fsuggestions&preferredRegion=&absolutePagePath=private-next-pages%2Fsuggestions.js&absoluteAppPath=private-next-pages%2F_app.js&absoluteDocumentPath=next%2Fdist%2Fpages%2F_document&middlewareConfigBase64=e30%3D!
 
@@ -312,7 +378,7 @@ function Suggestions() {
         // Re-export methods.
         const getStaticProps = (0,helpers/* hoist */.l)(suggestions_namespaceObject, "getStaticProps")
         const getStaticPaths = (0,helpers/* hoist */.l)(suggestions_namespaceObject, "getStaticPaths")
-        const getServerSideProps = (0,helpers/* hoist */.l)(suggestions_namespaceObject, "getServerSideProps")
+        const next_route_loaderpage_2Fsuggestions_preferredRegion_absolutePagePath_private_next_pages_2Fsuggestions_js_absoluteAppPath_private_next_pages_2F_app_js_absoluteDocumentPath_next_2Fdist_2Fpages_2F_document_middlewareConfigBase64_e30_3D_getServerSideProps = (0,helpers/* hoist */.l)(suggestions_namespaceObject, "getServerSideProps")
         const config = (0,helpers/* hoist */.l)(suggestions_namespaceObject, "config")
         const reportWebVitals = (0,helpers/* hoist */.l)(suggestions_namespaceObject, "reportWebVitals")
         
@@ -337,6 +403,35 @@ function Suggestions() {
         
         
     
+
+/***/ }),
+
+/***/ 3125:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+
+const mysql = __webpack_require__(2418);
+const { MYSQL_HOST = "127.0.0.1", MYSQL_PORT = "3306", MYSQL_DB = "bridging_the_gaps", MYSQL_USER = "root", MYSQL_PASS = "" } = process.env;
+const pool = mysql.createPool({
+    host: MYSQL_HOST,
+    port: Number(MYSQL_PORT),
+    database: MYSQL_DB,
+    user: MYSQL_USER,
+    password: MYSQL_PASS,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    decimalNumbers: true
+});
+module.exports = pool;
+
+
+/***/ }),
+
+/***/ 2418:
+/***/ ((module) => {
+
+module.exports = require("mysql2/promise");
 
 /***/ }),
 
@@ -463,6 +558,13 @@ module.exports = require("next/dist/shared/lib/utils.js");
 /***/ ((module) => {
 
 module.exports = require("next/head");
+
+/***/ }),
+
+/***/ 1853:
+/***/ ((module) => {
+
+module.exports = require("next/router");
 
 /***/ }),
 

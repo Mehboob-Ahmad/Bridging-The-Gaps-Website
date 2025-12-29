@@ -4,6 +4,7 @@
     "/api/uploads": {},
     "/admin": {},
     "/projects": {},
-    "/sitemap.xml": {}
+    "/sitemap.xml": {},
+    "/suggestions": {}
   }
 }

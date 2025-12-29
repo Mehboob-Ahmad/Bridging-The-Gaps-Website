@@ -64,7 +64,27 @@ var db_default = /*#__PURE__*/__webpack_require__.n(db);
 
 
 
+const SITE_URL = process.env.SITE_URL || "";
 function Projects({ projects = [] }) {
+    // Build ItemList JSON-LD for projects
+    const base = SITE_URL ? SITE_URL.replace(/\/$/, "") : "";
+    const projectsJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Projects — BRIDGING THE GAPS",
+        "url": base + "/projects",
+        "itemListElement": (projects || []).map((p, i)=>({
+                "@type": "ListItem",
+                "position": i + 1,
+                "item": {
+                    "@type": "Project",
+                    "name": p.name || p.title || `Project ${i + 1}`,
+                    "description": p.description || "",
+                    "url": base + (p.slug ? `/projects/${p.slug}` : `/projects/${p.project_id || ""}`),
+                    "startDate": p.created_at ? new Date(p.created_at).toISOString() : undefined
+                }
+            }))
+    };
     return /*#__PURE__*/ (0,jsx_runtime.jsxs)(Layout/* default */.Z, {
         children: [
             /*#__PURE__*/ (0,jsx_runtime.jsxs)((head_default()), {
@@ -75,6 +95,12 @@ function Projects({ projects = [] }) {
                     /*#__PURE__*/ jsx_runtime.jsx("meta", {
                         name: "description",
                         content: "Our ongoing and upcoming community projects."
+                    }),
+                    /*#__PURE__*/ jsx_runtime.jsx("script", {
+                        type: "application/ld+json",
+                        dangerouslySetInnerHTML: {
+                            __html: JSON.stringify(projectsJsonLd)
+                        }
                     })
                 ]
             }),

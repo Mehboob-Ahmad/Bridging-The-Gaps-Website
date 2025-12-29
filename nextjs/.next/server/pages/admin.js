@@ -121,11 +121,12 @@ var Layout = __webpack_require__(7345);
 
 
 
-function Admin({ users: initialUsers = [], donations: initialDonations = [], volunteers: initialVolunteers = [], projects: initialProjects = [], page = 1, limit = 20, csrf = "" }) {
+function Admin({ users: initialUsers = [], donations: initialDonations = [], volunteers: initialVolunteers = [], projects: initialProjects = [], reviews: initialReviews = [], page = 1, limit = 20, csrf = "" }) {
     const [users, setUsers] = (0,external_react_.useState)(initialUsers);
     const [donations, setDonations] = (0,external_react_.useState)(initialDonations);
     const [volunteers, setVolunteers] = (0,external_react_.useState)(initialVolunteers);
     const [projects, setProjects] = (0,external_react_.useState)(initialProjects);
+    const [reviews, setReviews] = (0,external_react_.useState)(initialReviews || []);
     async function postAction(action, payload) {
         const csrf =  false ? 0 : "";
         const res = await fetch("/api/admin?action=" + encodeURIComponent(action), {
@@ -172,6 +173,13 @@ function Admin({ users: initialUsers = [], donations: initialDonations = [], vol
         });
         setDonations(donations.filter((d)=>d.id !== id));
     }
+    async function delReview(id) {
+        if (!confirm("Delete review?")) return;
+        await postAction("delete_review", {
+            id
+        });
+        setReviews(reviews.filter((r)=>r.id !== id));
+    }
     return /*#__PURE__*/ (0,jsx_runtime.jsxs)(Layout/* default */.Z, {
         children: [
             /*#__PURE__*/ (0,jsx_runtime.jsxs)((head_default()), {
@@ -195,6 +203,81 @@ function Admin({ users: initialUsers = [], donations: initialDonations = [], vol
                             /*#__PURE__*/ jsx_runtime.jsx("p", {
                                 className: "muted",
                                 children: "Manage registered users and review recorded donations."
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("section", {
+                        children: [
+                            /*#__PURE__*/ jsx_runtime.jsx("h2", {
+                                children: "Reviews"
+                            }),
+                            /*#__PURE__*/ jsx_runtime.jsx("div", {
+                                style: {
+                                    marginBottom: 10
+                                },
+                                children: /*#__PURE__*/ jsx_runtime.jsx("a", {
+                                    className: "btn",
+                                    href: "/api/admin?action=export_reviews",
+                                    children: "Export Reviews CSV"
+                                })
+                            }),
+                            /*#__PURE__*/ (0,jsx_runtime.jsxs)("table", {
+                                style: {
+                                    width: "100%"
+                                },
+                                children: [
+                                    /*#__PURE__*/ jsx_runtime.jsx("thead", {
+                                        children: /*#__PURE__*/ (0,jsx_runtime.jsxs)("tr", {
+                                            children: [
+                                                /*#__PURE__*/ jsx_runtime.jsx("th", {
+                                                    children: "Name"
+                                                }),
+                                                /*#__PURE__*/ jsx_runtime.jsx("th", {
+                                                    children: "Rating"
+                                                }),
+                                                /*#__PURE__*/ jsx_runtime.jsx("th", {
+                                                    children: "Message"
+                                                }),
+                                                /*#__PURE__*/ jsx_runtime.jsx("th", {
+                                                    children: "Created"
+                                                }),
+                                                /*#__PURE__*/ jsx_runtime.jsx("th", {
+                                                    children: "Actions"
+                                                })
+                                            ]
+                                        })
+                                    }),
+                                    /*#__PURE__*/ jsx_runtime.jsx("tbody", {
+                                        children: reviews.length === 0 ? /*#__PURE__*/ jsx_runtime.jsx("tr", {
+                                            children: /*#__PURE__*/ jsx_runtime.jsx("td", {
+                                                colSpan: 5,
+                                                className: "muted",
+                                                children: "No reviews"
+                                            })
+                                        }) : reviews.map((r)=>/*#__PURE__*/ (0,jsx_runtime.jsxs)("tr", {
+                                                children: [
+                                                    /*#__PURE__*/ jsx_runtime.jsx("td", {
+                                                        children: r.name
+                                                    }),
+                                                    /*#__PURE__*/ jsx_runtime.jsx("td", {
+                                                        children: r.rating
+                                                    }),
+                                                    /*#__PURE__*/ jsx_runtime.jsx("td", {
+                                                        children: r.message.length > 80 ? r.message.substring(0, 80) + "..." : r.message
+                                                    }),
+                                                    /*#__PURE__*/ jsx_runtime.jsx("td", {
+                                                        children: r.created_at
+                                                    }),
+                                                    /*#__PURE__*/ jsx_runtime.jsx("td", {
+                                                        children: /*#__PURE__*/ jsx_runtime.jsx("button", {
+                                                            onClick: ()=>delReview(r.id),
+                                                            children: "Delete"
+                                                        })
+                                                    })
+                                                ]
+                                            }, r.id))
+                                    })
+                                ]
                             })
                         ]
                     }),
@@ -491,7 +574,7 @@ async function getServerSideProps({ req, res, query }) {
     const page = Math.max(1, parseInt(query.page || "1"));
     const limit = Math.min(100, parseInt(query.limit || "20"));
     const offset = (page - 1) * limit;
-    const [[users], [donations], [volunteers], [projects]] = await Promise.all([
+    const [[users], [donations], [volunteers], [projects], [reviews]] = await Promise.all([
         db_default().query("SELECT id,name,email,avatar,role,created_at FROM users ORDER BY created_at DESC LIMIT ? OFFSET ?", [
             limit,
             offset
@@ -507,6 +590,9 @@ async function getServerSideProps({ req, res, query }) {
         db_default().query("SELECT p.project_id,p.name,p.description,p.created_at,v.name as volunteer_name FROM Projects p LEFT JOIN Volunteer v ON p.volunteer_id = v.volunteer_id ORDER BY p.created_at DESC LIMIT ? OFFSET ?", [
             limit,
             offset
+        ]),
+        db_default().query("SELECT id,name,rating,message,created_at FROM reviews ORDER BY created_at DESC LIMIT ?", [
+            limit
         ])
     ]);
     const csrf = createCsrfToken();
@@ -516,6 +602,7 @@ async function getServerSideProps({ req, res, query }) {
             donations,
             volunteers,
             projects,
+            reviews,
             page,
             limit,
             csrf

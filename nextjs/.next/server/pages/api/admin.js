@@ -129,6 +129,24 @@ async function handler(req, res) {
                 total
             });
         }
+        // list reviews
+        if (req.method === "GET" && action === "list_reviews") {
+            const page = Math.max(1, parseInt(req.query.page || "1"));
+            const limit = Math.min(200, parseInt(req.query.limit || "50"));
+            const offset = (page - 1) * limit;
+            const [[countRows]] = await _lib_db__WEBPACK_IMPORTED_MODULE_1___default().query("SELECT COUNT(*) as total FROM reviews");
+            const total = countRows.total || 0;
+            const [rows] = await _lib_db__WEBPACK_IMPORTED_MODULE_1___default().query("SELECT id,name,rating,message,created_at FROM reviews ORDER BY created_at DESC LIMIT ? OFFSET ?", [
+                limit,
+                offset
+            ]);
+            return res.json({
+                reviews: rows,
+                page,
+                limit,
+                total
+            });
+        }
         if (req.method === "GET" && action === "list_volunteers") {
             const page = Math.max(1, parseInt(req.query.page || "1"));
             const limit = Math.min(100, parseInt(req.query.limit || "20"));
@@ -181,6 +199,16 @@ async function handler(req, res) {
             });
             res.setHeader("Content-Type", "text/csv");
             res.setHeader("Content-Disposition", 'attachment; filename="donations.csv"');
+            return res.send(csv);
+        }
+        // export reviews as CSV
+        if (req.method === "GET" && action === "export_reviews") {
+            const [rows] = await _lib_db__WEBPACK_IMPORTED_MODULE_1___default().query("SELECT id,name,rating,message,created_at FROM reviews ORDER BY created_at DESC");
+            const csv = (0,csv_stringify_sync__WEBPACK_IMPORTED_MODULE_4__.stringify)(rows, {
+                header: true
+            });
+            res.setHeader("Content-Type", "text/csv");
+            res.setHeader("Content-Disposition", 'attachment; filename="reviews.csv"');
             return res.send(csv);
         }
         if (req.method === "POST" && action === "delete_user") {
@@ -253,6 +281,22 @@ async function handler(req, res) {
                 } catch (e) {}
             }
             await _lib_db__WEBPACK_IMPORTED_MODULE_1___default().query("DELETE FROM donations WHERE id = ?", [
+                id
+            ]);
+            return res.json({
+                ok: true
+            });
+        }
+        if (req.method === "POST" && action === "delete_review") {
+            const csrf = req.headers["x-csrf-token"] || req.body.csrf || "";
+            if (!(0,_utils_auth__WEBPACK_IMPORTED_MODULE_3__/* .verifyCsrfToken */ .jU)(csrf)) return res.status(403).json({
+                error: "invalid_csrf"
+            });
+            const id = req.body.id;
+            if (!id) return res.status(400).json({
+                error: "id required"
+            });
+            await _lib_db__WEBPACK_IMPORTED_MODULE_1___default().query("DELETE FROM reviews WHERE id = ?", [
                 id
             ]);
             return res.json({

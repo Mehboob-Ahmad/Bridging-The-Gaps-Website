@@ -150,25 +150,24 @@ section button:focus {
 }
 
 footer {
-	position: fixed;
-	bottom: 16px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: calc(100% - 32px);
+	position: relative;
+	width: 100%;
 	max-width: var(--max-width);
-	text-align: center;
-	color: rgba(255, 255, 255, 0.95);
-	font-size: 0.95rem;
-	padding: 12px 0;
+	margin: 40px auto 0 auto;
+
 	background: var(--bar-bg);
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
-	border-radius: 10px;
-	/* Match header */
+
 	border: 2px solid #ffffff;
-	z-index: 100;
-	margin: 0;
+	border-radius: 10px;
+
+	padding: 18px 0;
+	text-align: center;
+	color: rgba(255, 255, 255, 0.95);
+	font-size: 0.95rem;
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+	z-index: 10;
 }
 
 /* center the content inside the full-width footer */
